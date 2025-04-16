@@ -1,6 +1,6 @@
 # 🔥 FDS Solver Framework
 
-This project is a **Finite Difference Scheme (FDS)** solver designed for flexible simulation of partial differential equations (PDEs) such as heat conduction, diffusion, and wave equations. It is written in **C++ for high performance** and integrates seamlessly with **Python** via bindings, allowing rapid experimentation, visualization, and post-processing.
+This project is a **Finite Difference Solver (FDS)** solver designed for flexible simulation of partial differential equations (PDEs) such as heat conduction, diffusion, and wave equations. It is written in **C++ for high performance** and integrates seamlessly with **Python** via bindings, allowing rapid experimentation, visualization, and post-processing.
 
 ## 🚀 Features
 
@@ -21,3 +21,11 @@ cd build
 cmake .. 
 cd ..
 cmake --build build --target ALL_BUILD --config Release
+
+### 2. Import a Finite Difference Stencil
+
+### 3. Create a Driver File to run FDS
+
+## Function Descriptions
+
+## For now see pybind and src
