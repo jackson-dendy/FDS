@@ -12,9 +12,13 @@ This project is a **Finite Difference Solver (FDS)** solver designed for flexibl
 
 ---
 
-## 🛠️ Setup Instructions
+## 🛠️ Build Instructions
 
-### 1. Build C++ Core
+### 1. Install Prerequisite Softwares
+
+- git, cmake, cpp compiler, python
+
+### 2. Build Source Files
 
 ```bash
 cd build
@@ -22,10 +26,3 @@ cmake ..
 cd ..
 cmake --build build --target ALL_BUILD --config Release
 
-### 2. Import a Finite Difference Stencil
-
-### 3. Create a Driver File to run FDS
-
-## Function Descriptions
-
-## For now see pybind and src
