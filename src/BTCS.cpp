@@ -98,6 +98,7 @@ Mesh& Mesh_Solver::glizzinator(int &selection, double t0, double tf, double h, s
         std::cout << "Unknowns Mapped to Matrix" << "\n";
     }
 
+    
     // Solve PDE or ODE
     if(verbose){
         std::cout << "Solving Mesh" << "\n";
@@ -105,10 +106,9 @@ Mesh& Mesh_Solver::glizzinator(int &selection, double t0, double tf, double h, s
     //int nnzs = a->countNonZeros();
    
     //auto* sparse_a = new CSRMatrix<double>(size_mesh, size_mesh, nnzs, true);
-
     //sparse_a->dense2csr(*a);
     //a->printMatrix();
-    a->SOR(b, sol, 1.3, 0.0001);
+    a->luSolve(b, sol);
     
 
     if(verbose){
@@ -198,6 +198,8 @@ void Mesh::d2_structure_mesh_gen(std::vector<int> &x_range, std::vector<int> &y_
     }
 
     d2_to_d3();
+
+    
     
     
     if(verbose){
@@ -272,7 +274,7 @@ void Mesh::d3_structure_mesh_gen(std::vector<int> &x_range, std::vector<int> &y_
     if(verbose){
         std::cout << "\n" << "Mesh Created" << "\n";
     }
-
+    
 };
 
 void Mesh::d3_to_d1(){

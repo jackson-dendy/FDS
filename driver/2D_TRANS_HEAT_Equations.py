@@ -17,23 +17,20 @@ equations = selection.D2_TRANS_HEAT
 
 # Mesh Generation
 mesh_instance = Mesh()
-size = 3
+size = 10
 
 
-bound_cond = [50, 30, 20, 20, 20, 20, 20, 20, 20, 20, 
-              50, 20, 20, 20, 20, 20, 20, 20, 20, 20, 
-              50, 20, 20, 20, 20, 20, 20, 20, 20, 20, 
-              50, 20, 20, 20, 20, 20, 20, 20, 20, 20, 
-              50, 20, 20, 20, 20, 20, 20, 20, 20, 20, 
-              50, 20, 20, 20, 20, 20, 20, 20, 20, 20, 
-              50, 20, 20, 20, 20, 20, 20, 20, 20, 20, 
-              50, 20, 20, 20, 20, 20, 20, 20, 20, 20, 
-              50, 20, 20, 20, 20, 20, 20, 20, 20, 20, 
-              50, 30, 20, 20, 20, 20, 20, 20, 20, 20]
+bound_cond= [ 
+              200, 200, 60, 70, 20, 20, 20, 20, 20, 20, 
+              100, 20, 20, 20, 20, 20, 20, 20, 20, 0, 
+              80, 20, 20, 20, 20, 20, 20, 20, 20, 0, 
+              80, 20, 20, 20, 20, 20, 20, 20, 20, 0, 
+              200, 100, 100, 30, 25, 100, 20, 20, 20, 0]
 
 
 
-mesh_instance.d3_structure_mesh_gen([0, size], [0, size], [0, 2], bound_cond)
+
+mesh_instance.d3_structure_mesh_gen([0, 10], [0, 5], [0, 20], bound_cond)
 
 test_instance = Mesh_Solver(mesh_instance, True)
 
@@ -49,12 +46,11 @@ print("Solution Found")
 
 
 
-
 # Set up figure and axis
 fig, ax = plt.subplots()
 
 # Initial data for heatmap (10x10 grid)
-heatmap = ax.imshow(Mesh[0], cmap='viridis', interpolation='bilinear')
+heatmap = ax.imshow(Mesh[0], cmap='turbo', interpolation='bilinear')
 
 
 # Animation update function
@@ -65,7 +61,7 @@ def update(frame):
     return [heatmap]
 
 # Create animation
-ani = animation.FuncAnimation(fig, update, frames=len(Mesh), interval=500, blit=True)
+ani = animation.FuncAnimation(fig, update, frames=len(Mesh), interval=500)
 
 plt.title("Animated Heatmap")
 plt.colorbar(heatmap)

@@ -17,6 +17,7 @@ void FDS_eqs::FDS_call(Matrix<double>* a, Mesh &mesh, std::vector<int> ind){
             break;
 
         case 1:
+            d2_trans_heat_equations(a, mesh, ind);
             break;
             
         case 3:
@@ -53,14 +54,13 @@ void FDS_eqs::d2_ss_heat_equations(Matrix<double>* a, Mesh &mesh, std::vector<in
     //
     // 0 = u(x, y, t+h) + u(x, y, t-h) + (2-r)*u(x, y, t) -r(u(x, y+h, t) + u(x, y-h, t) + u(x+h, y, t) + u(x-h, y, t))
 
-    double h = 0.25;
-    double delt = 0.25;
-    double alpha = 237;
+    double h = 1;
+    double delt = 0.1;
+    double alpha = 23;
 
     double r = -(2*delt*alpha)/pow(h,2);
 
     int i = ind.at(0);
-
     int size_mesh = mesh.get_size();
     int mat_index = i*size_mesh + i;
     
