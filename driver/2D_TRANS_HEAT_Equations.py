@@ -31,14 +31,14 @@ bound_cond= [
 
 
 
-mesh_instance.d3_structure_mesh_gen([0, 10], [0, 8], [0, 10], bound_cond)
+mesh_instance.d3_structure_mesh_gen([0, 10], [0, 8], [0, 70], bound_cond)
 
 test_instance = Mesh_Solver(mesh_instance, True)
 
 
 print("\nBegin Solver Phase\n")
-h = 5
-dt = 0.5
+h = 10
+dt = 0.01
 alpha = 289
 
 values = [h, dt, alpha]
@@ -50,4 +50,4 @@ Mesh = Mesh.get_mesh_3d()
 
 print("Solution Found")
 
-animated_heat_plot(Mesh, 500)
+animated_heat_plot(Mesh, 100)

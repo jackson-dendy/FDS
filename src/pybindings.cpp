@@ -14,6 +14,7 @@ PYBIND11_MODULE(btcs, m) {
     py::class_<struct node>(m, "node")
         .def(py::init<>())
         .def_readwrite("state", &node::state)
+        .def_readwrite("dstate", &node::dstate)
         .def_readwrite("position", &node::position)
         .def_readwrite("isboundary", &node::isboundary);
     
@@ -28,13 +29,15 @@ PYBIND11_MODULE(btcs, m) {
         .def("size", &Mesh::get_size)
         .def("get_mesh_2d", &Mesh::get_mesh_2d, py::return_value_policy::reference)
         .def("get_mesh_3d", &Mesh::get_mesh_3d, py::return_value_policy::reference)
-        .def("d3_structure_mesh_gen", &Mesh::d3_structure_mesh_gen)
+        .def("d3_structure_mesh_gen", py::overload_cast<std::vector<int> &, std::vector<int> &, std::vector<int> &, std::vector<double> &, std::vector<double> &>(&Mesh::d3_structure_mesh_gen))
+        .def("d3_structure_mesh_gen", py::overload_cast<std::vector<int> &, std::vector<int> &, std::vector<int> &, std::vector<double> &>(&Mesh::d3_structure_mesh_gen))
         .def("d2_strucutre_mesh_gen", &Mesh::d2_structure_mesh_gen);
 
     py::enum_<eq_selection>(m, "selection")
         .value("D2_SS_HEAT", eq_selection::D2_SS_HEAT)
         .value("D2_TRANS_HEAT", eq_selection::D2_TRANS_HEAT)
-        .value("ARB", eq_selection::ARB);
+        .value("ARB_HYPERBOLIC", eq_selection::ARB_HYPERBOLIC)
+        .value("ARB_PARABOLIC", eq_selection::ARB_PARABOLIC);
         
 
     m.attr("__version__") = "0.0.1";

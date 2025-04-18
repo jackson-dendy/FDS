@@ -81,6 +81,9 @@ Mesh& Mesh_Solver::glizzinator(int &selection, std::vector<double> values)
         std::cout << "Boundary Conditions Set" << "\n";
     }
 
+    //active_mesh.disp_mesh(3);
+    
+
     // Set unkown Coef - in current position and returns the
     for(int i = 0; i < size_mesh; i++){
         
@@ -98,29 +101,38 @@ Mesh& Mesh_Solver::glizzinator(int &selection, std::vector<double> values)
         std::cout << "Unknowns Mapped to Matrix" << "\n";
     }
 
-    
+    //a->printMatrix();
     // Solve PDE or ODE
     if(verbose){
         std::cout << "Solving Mesh" << "\n";
     }
     int nnzs = a->countNonZeros();
 
-    if(nnzs/pow(size_mesh,2) < 0.5){
+    if(nnzs/pow(size_mesh,2) > 0.4){
+
+        if(verbose){
+            std::cout << "Using LU Solve Method" << "\n";
+        }
         
         a->luSolve(b, sol);
 
     }
     else{
-    auto* sparse_a = new CSRMatrix<double>(size_mesh, size_mesh, nnzs, true);
-    sparse_a->dense2csr(*a);
-    //a->printMatrix();
-    sparse_a->SOR(b, sol, 1.2, 0.001);
+
+        if(verbose){
+            std::cout << "Using SOR Method" << "\n";
+        }
+
+        auto* sparse_a = new CSRMatrix<double>(size_mesh, size_mesh, nnzs, true);
+        sparse_a->dense2csr(*a);
+        sparse_a->SOR(b, sol, 1.2, 0.001);
     }
 
     if(verbose){
         std::cout << "Mesh Solved" << "\n";
     }
     
+    // Remaps Solution matrix to nodes
     for(int i =0; i<size_mesh;i++){
         node new_node;
         new_node = active_mesh.get_node(i);
@@ -134,8 +146,6 @@ Mesh& Mesh_Solver::glizzinator(int &selection, std::vector<double> values)
         
             
     }
-
-    active_mesh.disp_mesh(3);
     
     return active_mesh;
 
@@ -217,6 +227,42 @@ void Mesh::d2_structure_mesh_gen(std::vector<int> &x_range, std::vector<int> &y_
     
 };
 
+void Mesh::d3_structure_mesh_gen(std::vector<int> &x_range, std::vector<int> &y_range, std::vector<int> &z_range, std::vector<double> &boundary_cond, std::vector<double> &dbound_cond){
+    d3_structure_mesh_gen(x_range, y_range, z_range, boundary_cond);
+
+     // Built from 
+     loading_bar l(slices, "DMesh");
+     for(int k = 0; k <slices; k++){
+         for(int i = 0; i < rows ; i++){
+             
+             for(int j = 0; j < cols; j++){
+                           
+                 // Is the mesh on a boundary
+                 if (d3_mesh.at(k).at(i).at(j).isboundary){
+ 
+                    
+                     
+                     d3_mesh.at(k).at(i).at(j).dstate = dbound_cond.at(i*cols + j);
+                     
+                 }
+ 
+                 else{
+                     
+                     d3_mesh.at(k).at(i).at(j).dstate = 0;
+                 }
+             
+              
+             }
+             
+             
+         }
+ 
+         l.step_bar();
+     }
+
+
+};
+
 void Mesh::d3_structure_mesh_gen(std::vector<int> &x_range, std::vector<int> &y_range, std::vector<int> &z_range, std::vector<double> &boundary_cond){
     // Generate a rectangular prism 3d mesh (btcs)
 
@@ -246,7 +292,8 @@ void Mesh::d3_structure_mesh_gen(std::vector<int> &x_range, std::vector<int> &y_
             
             for(int j = 0; j < cols; j++){
                 
-
+                
+                
                 // Is the mesh on a boundary
                 if (i == 0 || j == 0 || j == cols-1 || i == rows-1 || k == 0){
 
@@ -263,6 +310,7 @@ void Mesh::d3_structure_mesh_gen(std::vector<int> &x_range, std::vector<int> &y_
                     
                     d3_mesh.at(k).at(i).at(j).state = 0;
                 }
+            
 
                 d3_mesh.at(k).at(i).at(j).position = {i,j,k};                
             }

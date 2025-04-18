@@ -47,6 +47,7 @@ class Mesh{
     // 2D mesh generator acts as a constructor
     void d2_structure_mesh_gen(std::vector<int> &x_range, std::vector<int> &y_range, std::vector<double> &boundary_cond);
     void d3_structure_mesh_gen(std::vector<int> &x_range, std::vector<int> &y_range, std::vector<int> &z_range, std::vector<double> &boundary_cond);
+    void d3_structure_mesh_gen(std::vector<int> &x_range, std::vector<int> &y_range, std::vector<int> &z_range, std::vector<double> &boundary_cond, std::vector<double> &dbound_cond);
 
     // Mesh Poperties
     bool verbose = true;
@@ -94,6 +95,7 @@ struct node{
     // information conatined ata single point in the mesh
 
     double state;
+    double dstate;
     std::vector<int> position;
     bool isboundary;
 
@@ -104,7 +106,9 @@ enum eq_selection{
     // Enum for which equations to solve
     D2_SS_HEAT,
     D2_TRANS_HEAT,
-    ARB
+    ARB_PARABOLIC,
+    ARB_HYPERBOLIC
+    
 };
 
 class FDS_eqs{
@@ -125,5 +129,6 @@ class FDS_eqs{
     //  FDE Equations 
     void d2_ss_heat_equations(Matrix<double>* a, Mesh &mesh, std::vector<int> ind);  
     void d2_trans_heat_equations(Matrix<double>* a, Mesh &mesh, std::vector<int> ind, std::vector<double> vals);  
-    void arb_stencil(Matrix<double>* a, Mesh &mesh, std::vector<int> ind, std::vector<double> vals);
+    void arb_parabolic_stencil(Matrix<double>* a, Mesh &mesh, std::vector<int> ind, std::vector<double> vals);
+    void arb_hyperbolic_stencil(Matrix<double>* a, Mesh &mesh, std::vector<int> ind, std::vector<double> vals);
 };

@@ -21,8 +21,12 @@ void FDS_eqs::FDS_call(Matrix<double>* a, Mesh &mesh, std::vector<int> ind, std:
             break;
             
         case 2:
-            arb_stencil(a, mesh, ind, vals);
+            arb_parabolic_stencil(a, mesh, ind, vals);
             break;
+        case 3:
+            arb_hyperbolic_stencil(a, mesh, ind, vals);
+            break;
+
     };
 };
 
@@ -49,7 +53,7 @@ void FDS_eqs::d2_ss_heat_equations(Matrix<double>* a, Mesh &mesh, std::vector<in
 
     void FDS_eqs::d2_trans_heat_equations(Matrix<double>* a, Mesh &mesh, std::vector<int> ind, std::vector<double> vals){
     // 2d transient heat equations:         [     ] [     -r      ] [     ]
-    //                                delH =[  1  ] [ -r  2-4r -r ] [  0  ]
+    //                                delH =[  1  ] [ -r  1+4r -r ] [  0  ]
     //                                      [     ] [     -r      ] [     ]
     // r = 2*delt*alpha/h^2
     //
@@ -65,7 +69,6 @@ void FDS_eqs::d2_ss_heat_equations(Matrix<double>* a, Mesh &mesh, std::vector<in
     int size_mesh = mesh.get_size();
     int mat_index = i*size_mesh + i;
     
-    
     a->values[mat_index] = 1+4*r; // u(x,y,t)
     a->values[mat_index-mesh.cols*mesh.rows] = -1; // u(x,y,t-h)
     a->values[mat_index+1] = -r; // u(x+h,y,t)
@@ -75,17 +78,16 @@ void FDS_eqs::d2_ss_heat_equations(Matrix<double>* a, Mesh &mesh, std::vector<in
 
     }
 
-    void FDS_eqs::arb_stencil(Matrix<double>* a, Mesh &mesh, std::vector<int> ind, std::vector<double> vals){
-        // Intake Arbitary 3d Finite difference stencils indexs a 1d vector in this way BTCS
-        //                                      [           ] [          vals[1]         ] [     ]
-        //                                delH =[  vals[0]  ] [ vals[2]  vals[3] vals[4] ] [  0  ]
-        //                                      [           ] [          vals[5]         ] [     ]
+    void FDS_eqs::arb_parabolic_stencil(Matrix<double>* a, Mesh &mesh, std::vector<int> ind, std::vector<double> vals){
+        // Intake Arbitary 3d Finite difference stencils indexs a 1d vector in this way 
+        //                                      [           ] [          vals[1]         ] [           ]
+        //                                delH =[  vals[0]  ] [ vals[2]  vals[3] vals[4] ] [  vals[6]  ]
+        //                                      [           ] [          vals[5]         ] [           ]
 
-    
         int i = ind.at(0);
         int size_mesh = mesh.get_size();
         int mat_index = i*size_mesh + i;
-        
+
         
         a->values[mat_index] = vals.at(3); // u(x,y,t)
         a->values[mat_index-mesh.cols*mesh.rows] = vals.at(0); // u(x,y,t-h)
@@ -94,4 +96,26 @@ void FDS_eqs::d2_ss_heat_equations(Matrix<double>* a, Mesh &mesh, std::vector<in
         a->values[mat_index+mesh.cols] = vals.at(1); // u(x,y+h,t)
         a->values[mat_index-mesh.cols] = vals.at(5); // u(x,y-h,t)
     
+        
+    
+        }
+
+        void FDS_eqs::arb_hyperbolic_stencil(Matrix<double>* a, Mesh &mesh, std::vector<int> ind, std::vector<double> vals){
+        // Intake Arbitary 3d Finite difference stencils indexs a 1d vector in this way 
+        //                                      [           ] [          vals[1]         ] [           ]
+        //                                delH =[  vals[0]  ] [ vals[2]  vals[3] vals[4] ] [  vals[6]  ]
+        //                                      [           ] [          vals[5]         ] [           ]
+        int i = ind.at(0);
+        int size_mesh = mesh.get_size();
+        int mat_index = i*size_mesh + i;
+
+        a->values[mat_index] = vals.at(3); // u(x,y,t)
+        a->values[mat_index-mesh.cols*mesh.rows] = vals.at(0); // u(x,y,t-h)
+        a->values[mat_index+mesh.cols*mesh.rows] = vals.at(6); // u(x,y,t+h)
+        a->values[mat_index+1] = vals.at(4); // u(x+h,y,t)
+        a->values[mat_index-1] = vals.at(2); // u(x-h,y,t)
+        a->values[mat_index+mesh.cols] = vals.at(1); // u(x,y+h,t)
+        a->values[mat_index-mesh.cols] = vals.at(5); // u(x,y-h,t)
+    
+            
         }

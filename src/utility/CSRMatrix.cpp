@@ -347,11 +347,7 @@ void CSRMatrix<T>::SOR(T *b, T *x, double omega, double atol)
         // update count
         count++;
         // break at maximum
-        if (count == 10000)
-        {
-            cout << "SOR CRS is not converging!!!" << endl;
-            break;
-        }
+        
         /*
         // print some cool stuff
         cout << "Iteration: " << count << endl;
