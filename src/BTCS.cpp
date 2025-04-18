@@ -7,7 +7,7 @@ Mesh_Solver::Mesh_Solver(Mesh &mesh, bool verbose){
     //std::cout << active_mesh.get_size();
 };
 
-Mesh& Mesh_Solver::glizzinator(int &selection, double t0, double tf, double h, std::vector<double> &initial_conditions)
+Mesh& Mesh_Solver::glizzinator(int &selection, std::vector<double> values)
 {
     // 3-Var Finite Difference Solver
 
@@ -90,7 +90,7 @@ Mesh& Mesh_Solver::glizzinator(int &selection, double t0, double tf, double h, s
 
         else{
             std::vector<int> ind = {i};
-            equations.FDS_call(a, active_mesh, ind);
+            equations.FDS_call(a, active_mesh, ind, values);
         }
     }
 
@@ -115,14 +115,13 @@ Mesh& Mesh_Solver::glizzinator(int &selection, double t0, double tf, double h, s
         std::cout << "Mesh Solved" << "\n";
     }
     
-    for (int i = 0; i < size_mesh; i++) {
-        int row = i / cols;
-        int col = i % cols;
-    
-        struct node change = active_mesh.get_node(row, col);
-        change.state = sol[i];
-        active_mesh.set_node(change, row, col);
+    for(int i =0; i<size_mesh;i++){
+        node new_node;
+        new_node = active_mesh.get_node(i);
+        new_node.state = sol[i];
+        active_mesh.set_node(new_node, i);
     }
+    
 
     if(verbose){
         std::cout << "Mesh Remapped to 2D" << "\n";  

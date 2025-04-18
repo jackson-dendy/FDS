@@ -3,11 +3,13 @@ from pathlib import Path
 path_root = Path(__file__).parents[1]
 root = str(path_root)
 sys.path.insert(1, f'{root}//build//Release')
+sys.path.insert(2, f'{root}//driver')
 
 import random
 import matplotlib.pyplot as plt
 
 from btcs  import Mesh_Solver, Mesh, selection 
+from utility import heat_plot
 
 print("\nBegin Meshing Phase\n")
 
@@ -33,7 +35,7 @@ test_instance = Mesh_Solver(mesh_instance, True)
 print("\nBegin Solver Phase\n")
 
 # Solve it
-Mesh = test_instance.solve(equations, 0, 4, 0.001, [0.0001])
+Mesh = test_instance.solve(equations, [1])
 
 print(Mesh.size())
 Mesh = Mesh.get_mesh_2d()
@@ -41,11 +43,4 @@ Mesh = Mesh.get_mesh_2d()
 print("Solution Found")
 
 
-
-
-plt.imshow(Mesh, cmap='turbo', interpolation = 'bilinear')
-plt.colorbar(label='Temperature (°C)')
-plt.title("2D SS Heat Transfer")
-plt.xlabel("X Position")
-plt.ylabel("Y Position")
-plt.show()
+heat_plot(Mesh)

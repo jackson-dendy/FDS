@@ -78,7 +78,7 @@ class Mesh_Solver{
     Mesh_Solver(Mesh &active_mesh, bool verbose);
 
     // Solver for Finite Difference Method
-    Mesh& glizzinator(int &selection, double t0, double tf, double h, std::vector<double> &initial_conditions); 
+    Mesh& glizzinator(int &selection, std::vector<double> values); 
 
     // Return the active mesh
     Mesh get_sol();
@@ -116,7 +116,7 @@ class FDS_eqs{
     FDS_eqs(int selection);
 
     // Calls Equations
-    void FDS_call(Matrix<double>* a, Mesh &mesh, std::vector<int> ind);
+    void FDS_call(Matrix<double>* a, Mesh &mesh, std::vector<int> ind, std::vector<double> vals);
 
     private:
 
@@ -124,5 +124,5 @@ class FDS_eqs{
     
     //  FDE Equations 
     void d2_ss_heat_equations(Matrix<double>* a, Mesh &mesh, std::vector<int> ind);  
-    void d2_trans_heat_equations(Matrix<double>* a, Mesh &mesh, std::vector<int> ind);  
+    void d2_trans_heat_equations(Matrix<double>* a, Mesh &mesh, std::vector<int> ind, std::vector<double> vals);  
 };

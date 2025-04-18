@@ -6,7 +6,7 @@ FDS_eqs::FDS_eqs(int selection){
     this -> selection = selection;
 };
 
-void FDS_eqs::FDS_call(Matrix<double>* a, Mesh &mesh, std::vector<int> ind){
+void FDS_eqs::FDS_call(Matrix<double>* a, Mesh &mesh, std::vector<int> ind, std::vector<double> vals){
     // Used to call the FDE and edit the coefficient Matrix
     
     switch(selection){
@@ -17,7 +17,7 @@ void FDS_eqs::FDS_call(Matrix<double>* a, Mesh &mesh, std::vector<int> ind){
             break;
 
         case 1:
-            d2_trans_heat_equations(a, mesh, ind);
+            d2_trans_heat_equations(a, mesh, ind, vals);
             break;
             
         case 3:
@@ -46,7 +46,7 @@ void FDS_eqs::d2_ss_heat_equations(Matrix<double>* a, Mesh &mesh, std::vector<in
     
     };
 
-    void FDS_eqs::d2_trans_heat_equations(Matrix<double>* a, Mesh &mesh, std::vector<int> ind){
+    void FDS_eqs::d2_trans_heat_equations(Matrix<double>* a, Mesh &mesh, std::vector<int> ind, std::vector<double> vals){
     // 2d transient heat equations:         [     ] [     -r      ] [     ]
     //                                delH =[  1  ] [ -r  2-4r -r ] [  1  ]
     //                                      [     ] [     -r      ] [     ]
@@ -54,9 +54,9 @@ void FDS_eqs::d2_ss_heat_equations(Matrix<double>* a, Mesh &mesh, std::vector<in
     //
     // 0 = u(x, y, t+h) + u(x, y, t-h) + (2-r)*u(x, y, t) -r(u(x, y+h, t) + u(x, y-h, t) + u(x+h, y, t) + u(x-h, y, t))
 
-    double h = 1;
-    double delt = 0.1;
-    double alpha = 23;
+    double h = vals.at(0);
+    double delt = vals.at(1);
+    double alpha = vals.at(2);
 
     double r = -(2*delt*alpha)/pow(h,2);
 
@@ -65,7 +65,7 @@ void FDS_eqs::d2_ss_heat_equations(Matrix<double>* a, Mesh &mesh, std::vector<in
     int mat_index = i*size_mesh + i;
     
     
-    a->values[mat_index] = -4*r; // u(x,y,t)
+    a->values[mat_index] = 2-4*r; // u(x,y,t)
     a->values[mat_index+mesh.cols*mesh.rows] = 1; // u(x, y, t+h)
     a->values[mat_index-mesh.cols*mesh.rows] = -1; // u(x,y,t-h)
     a->values[mat_index+1] = r; // u(x+h,y,t)
