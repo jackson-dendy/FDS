@@ -28,17 +28,21 @@ bound_cond= [
               100, 0, 0, 0, 0, 0, 0, 0, 0, 0,
               100, 100, 100, 100, 100, 100, 100, 100, 100, 100]
 
+bound_cond = [3, 3, 3,
+              3, 0, 0,
+              3, 3, 3]
 
 
 
-mesh_instance.d3_structure_mesh_gen([0, 10], [0, 8], [0, 6], bound_cond)
+
+mesh_instance.d3_structure_mesh_gen([0, 3], [0, 3], [0, 6], bound_cond)
 
 test_instance = Mesh_Solver(mesh_instance, False)
 
 
 print("\nBegin Solver Phase\n")
-h = 5
-dt = 0.5
+h = 10
+dt = 0.01
 alpha = 289
 
 r = (dt*alpha)/h**2

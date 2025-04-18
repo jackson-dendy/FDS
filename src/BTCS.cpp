@@ -92,7 +92,7 @@ Mesh& Mesh_Solver::glizzinator(int &selection, std::vector<double> values)
             std::vector<int> ind = {i};
             equations.FDS_call(a, active_mesh, ind, values);
         }
-    }
+        }
 
     if(verbose){
         std::cout << "Unknowns Mapped to Matrix" << "\n";
@@ -104,11 +104,18 @@ Mesh& Mesh_Solver::glizzinator(int &selection, std::vector<double> values)
         std::cout << "Solving Mesh" << "\n";
     }
     int nnzs = a->countNonZeros();
-   
+
+    if(nnzs/pow(size_mesh,2) < 0.5){
+        
+        a->luSolve(b, sol);
+
+    }
+    else{
     auto* sparse_a = new CSRMatrix<double>(size_mesh, size_mesh, nnzs, true);
     sparse_a->dense2csr(*a);
     //a->printMatrix();
     sparse_a->SOR(b, sol, 1.2, 0.001);
+    }
 
     if(verbose){
         std::cout << "Mesh Solved" << "\n";
@@ -127,6 +134,8 @@ Mesh& Mesh_Solver::glizzinator(int &selection, std::vector<double> values)
         
             
     }
+
+    active_mesh.disp_mesh(3);
     
     return active_mesh;
 
@@ -209,7 +218,7 @@ void Mesh::d2_structure_mesh_gen(std::vector<int> &x_range, std::vector<int> &y_
 };
 
 void Mesh::d3_structure_mesh_gen(std::vector<int> &x_range, std::vector<int> &y_range, std::vector<int> &z_range, std::vector<double> &boundary_cond){
-    // Generate a rectangular prism 3d mesh
+    // Generate a rectangular prism 3d mesh (btcs)
 
     // Find size of struture mesh
     cols = abs(x_range[1] - x_range[0]);
@@ -239,7 +248,7 @@ void Mesh::d3_structure_mesh_gen(std::vector<int> &x_range, std::vector<int> &y_
                 
 
                 // Is the mesh on a boundary
-                if (i == 0 || j == 0 || j == cols-1 || i == rows-1 || k == 0 || k == slices-1){
+                if (i == 0 || j == 0 || j == cols-1 || i == rows-1 || k == 0){
 
                     d3_mesh.at(k).at(i).at(j).isboundary = true;
                     
