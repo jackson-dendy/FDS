@@ -34,7 +34,7 @@ PYBIND11_MODULE(btcs, m) {
     py::enum_<eq_selection>(m, "selection")
         .value("D2_SS_HEAT", eq_selection::D2_SS_HEAT)
         .value("D2_TRANS_HEAT", eq_selection::D2_TRANS_HEAT)
-        .value("JIGGLE", eq_selection::JIGGLE);
+        .value("ARB", eq_selection::ARB);
         
 
     m.attr("__version__") = "0.0.1";

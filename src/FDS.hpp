@@ -104,7 +104,7 @@ enum eq_selection{
     // Enum for which equations to solve
     D2_SS_HEAT,
     D2_TRANS_HEAT,
-    JIGGLE
+    ARB
 };
 
 class FDS_eqs{
@@ -125,4 +125,5 @@ class FDS_eqs{
     //  FDE Equations 
     void d2_ss_heat_equations(Matrix<double>* a, Mesh &mesh, std::vector<int> ind);  
     void d2_trans_heat_equations(Matrix<double>* a, Mesh &mesh, std::vector<int> ind, std::vector<double> vals);  
+    void arb_stencil(Matrix<double>* a, Mesh &mesh, std::vector<int> ind, std::vector<double> vals);
 };

@@ -20,7 +20,8 @@ void FDS_eqs::FDS_call(Matrix<double>* a, Mesh &mesh, std::vector<int> ind, std:
             d2_trans_heat_equations(a, mesh, ind, vals);
             break;
             
-        case 3:
+        case 2:
+            arb_stencil(a, mesh, ind, vals);
             break;
     };
 };
@@ -58,19 +59,41 @@ void FDS_eqs::d2_ss_heat_equations(Matrix<double>* a, Mesh &mesh, std::vector<in
     double delt = vals.at(1);
     double alpha = vals.at(2);
 
-    double r = -(2*delt*alpha)/pow(h,2);
+    double r = delt*alpha/pow(h,2);
 
     int i = ind.at(0);
     int size_mesh = mesh.get_size();
     int mat_index = i*size_mesh + i;
     
     
-    a->values[mat_index] = 2-4*r; // u(x,y,t)
+    a->values[mat_index] = 1+4*r; // u(x,y,t)
     a->values[mat_index+mesh.cols*mesh.rows] = 1; // u(x, y, t+h)
     a->values[mat_index-mesh.cols*mesh.rows] = -1; // u(x,y,t-h)
-    a->values[mat_index+1] = r; // u(x+h,y,t)
-    a->values[mat_index-1] = r; // u(x-h,y,t)
-    a->values[mat_index+mesh.cols] = r; // u(x,y+h,t)
-    a->values[mat_index-mesh.cols] = r; // u(x,y-h,t)
+    a->values[mat_index+1] = -r; // u(x+h,y,t)
+    a->values[mat_index-1] = -r; // u(x-h,y,t)
+    a->values[mat_index+mesh.cols] = -r; // u(x,y+h,t)
+    a->values[mat_index-mesh.cols] = -r; // u(x,y-h,t)
 
     }
+
+    void FDS_eqs::arb_stencil(Matrix<double>* a, Mesh &mesh, std::vector<int> ind, std::vector<double> vals){
+        // Intake Arbitary 3d Finite difference stencils indexs a 1d vector in this way
+        //                                      [           ] [          vals[1]         ] [           ]
+        //                                delH =[  vals[0]  ] [ vals[2]  vals[3] vals[4] ] [  vals[6]  ]
+        //                                      [           ] [          vals[5]         ] [           ]
+
+    
+        int i = ind.at(0);
+        int size_mesh = mesh.get_size();
+        int mat_index = i*size_mesh + i;
+        
+        
+        a->values[mat_index] = vals.at(3); // u(x,y,t)
+        a->values[mat_index+mesh.cols*mesh.rows] = vals.at(6); // u(x, y, t+h)
+        a->values[mat_index-mesh.cols*mesh.rows] = vals.at(0); // u(x,y,t-h)
+        a->values[mat_index+1] = vals.at(4); // u(x+h,y,t)
+        a->values[mat_index-1] = vals.at(2); // u(x-h,y,t)
+        a->values[mat_index+mesh.cols] = vals.at(1); // u(x,y+h,t)
+        a->values[mat_index-mesh.cols] = vals.at(5); // u(x,y-h,t)
+    
+        }
