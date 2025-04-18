@@ -103,13 +103,12 @@ Mesh& Mesh_Solver::glizzinator(int &selection, std::vector<double> values)
     if(verbose){
         std::cout << "Solving Mesh" << "\n";
     }
-    //int nnzs = a->countNonZeros();
+    int nnzs = a->countNonZeros();
    
-    //auto* sparse_a = new CSRMatrix<double>(size_mesh, size_mesh, nnzs, true);
-    //sparse_a->dense2csr(*a);
+    auto* sparse_a = new CSRMatrix<double>(size_mesh, size_mesh, nnzs, true);
+    sparse_a->dense2csr(*a);
     //a->printMatrix();
-    a->luSolve(b, sol);
-    
+    sparse_a->SOR(b, sol, 1.2, 0.001);
 
     if(verbose){
         std::cout << "Mesh Solved" << "\n";
